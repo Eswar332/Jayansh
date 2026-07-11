@@ -11,7 +11,7 @@ async function seed() {
     description:
       "Pure, creamy whole milk sourced directly from local farms. Rich in calcium, protein, and essential vitamins. Perfect for drinking, cooking, and baking.",
     price: "68.00",
-    image: "/images/fresh-milk.jpg",
+    image: "/products/fresh-milk.jpg",
     category: "Milk",
     stock: 200,
     unit: "1 Litre",
