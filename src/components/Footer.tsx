@@ -61,15 +61,15 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li className="flex items-center space-x-2">
                 <span>📧</span>
-                <span>orders@milkfresh.com</span>
+                <span>dimmiribheemarao@gmail.com</span>
               </li>
               <li className="flex items-center space-x-2">
                 <span>📞</span>
-                <span>+1 (555) 123-4567</span>
+                <span>+91 8374634456</span>
               </li>
               <li className="flex items-center space-x-2">
                 <span>📍</span>
-                <span>123 Dairy Lane, Farmville</span>
+                <span>Sariyapalli Village</span>
               </li>
             </ul>
           </div>
