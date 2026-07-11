@@ -139,7 +139,7 @@ export default function RegisterPage() {
                     value={form.name}
                     onChange={(e) => updateForm("name", e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="John Doe"
+                    placeholder="Eswar"
                   />
                 </div>
                 <div>
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                     value={form.phone}
                     onChange={(e) => updateForm("phone", e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+91 xxxxxxxxxx"
                   />
                 </div>
               </div>
@@ -173,7 +173,7 @@ export default function RegisterPage() {
                     value={form.email}
                     onChange={(e) => updateForm("email", e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="you@example.com"
+                    placeholder="your-mail@gmail.com"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -226,7 +226,7 @@ export default function RegisterPage() {
                     value={form.address}
                     onChange={(e) => updateForm("address", e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="123 Main Street"
+                    placeholder="Address"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
