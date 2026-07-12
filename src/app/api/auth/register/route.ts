@@ -8,7 +8,7 @@ import { z } from "zod";
 const registerSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
-  phone: z.string().optional(),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
   password: z.string().min(6),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       .values({
         name: data.name,
         email: data.email,
-        phone: data.phone || null,
+        phone: data.phone,
         address: data.address || null,
         city: data.city || null,
         state: data.state || null,
