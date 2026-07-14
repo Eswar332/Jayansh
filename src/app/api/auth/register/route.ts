@@ -8,7 +8,7 @@ import { z } from "zod";
 const registerSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
-  phone: z.string().regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+  phone: z.string().regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number").transform((value) => value.trim()),
   password: z.string().min(6),
   address: z.string().optional(),
   city: z.string().optional(),
