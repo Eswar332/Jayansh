@@ -287,7 +287,7 @@ export default function RegisterPage() {
 
                   <div className="animate-slide-up stagger-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Phone Number * <span className="text-red-400">*</span>
+                      Phone Number <span className="text-red-400">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -298,7 +298,7 @@ export default function RegisterPage() {
                           updateForm("phone", e.target.value.replace(/[^0-9+\-\s]/g, ""))
                         }
                         className="w-full border border-gray-200 rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-300"
-                        placeholder="+91 98765 43210"
+                        placeholder="+91 xxxxxxxxxx"
                       />
                       <span className="absolute left-3.5 top-3.5 text-gray-400">📱</span>
                       {form.phone.trim().length >= 10 && (
