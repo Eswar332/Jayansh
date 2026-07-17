@@ -41,6 +41,7 @@ interface AdminOrder {
   notes: string | null;
   createdAt: string;
   updatedAt: string;
+  customerId: number;
   customerName: string;
   customerEmail: string;
   customerPhone: string | null;
@@ -168,10 +169,9 @@ export default function AdminDashboard() {
 
     try {
       const headers = { "x-admin-key": key };
-
       const [ordersRes, statsRes] = await Promise.all([
-        fetch("/api/admin/orders", { headers }),
-        fetch("/api/admin/stats", { headers }),
+        fetch("/api/admin/orders", { headers, cache: "no-store" }),
+        fetch("/api/admin/stats", { headers, cache: "no-store" }),
       ]);
 
       // Handle auth failure
@@ -223,7 +223,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const res = await fetch("/api/admin/stats", {
+      const res = await fetch(`/api/admin/stats?t=${Date.now()}`, {
         headers: { "x-admin-key": key },
       });
 
@@ -247,7 +247,7 @@ export default function AdminDashboard() {
       setStats(statsData);
 
       // Now fetch orders too
-      const ordersRes = await fetch("/api/admin/orders", {
+      const ordersRes = await fetch(`/api/admin/orders?t=${Date.now()}`, {
         headers: { "x-admin-key": key },
       });
 
@@ -275,7 +275,7 @@ export default function AdminDashboard() {
     const key = adminKeyRef.current;
     if (!key) return;
     try {
-      const res = await fetch("/api/admin/email-settings", {
+      const res = await fetch(`/api/admin/email-settings?t=${Date.now()}`, {
         headers: { "x-admin-key": key },
       });
       if (res.ok) {
@@ -455,7 +455,8 @@ export default function AdminDashboard() {
       !q ||
       o.orderNumber.toLowerCase().includes(q) ||
       o.customerName.toLowerCase().includes(q) ||
-      o.customerEmail.toLowerCase().includes(q);
+      o.customerEmail.toLowerCase().includes(q) ||
+      (o.customerPhone ? o.customerPhone.includes(q) : false);
     return matchStatus && matchSearch;
   });
 
@@ -495,7 +496,7 @@ export default function AdminDashboard() {
           <p className="text-center text-xs text-gray-400 mt-4">
             Default key:{" "}
             <code className="bg-gray-100 px-2 py-0.5 rounded">
-            Enter Your Admin Key
+              milkfresh-admin-2026
             </code>
           </p>
         </div>
@@ -508,33 +509,41 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-100">
       {/* Top bar */}
       <header className="bg-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🥛</span>
             <h1 className="text-lg font-bold">
               MilkFresh <span className="text-blue-400">Admin</span>
             </h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${activeTab === "dashboard" ? "bg-blue-600" : "hover:bg-slate-700"}`}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
+                activeTab === "dashboard"
+                  ? "bg-blue-600"
+                  : "hover:bg-slate-700"
+              }`}
             >
-              Dashboard
+              📊 Dashboard
             </button>
             <button
               onClick={() => setActiveTab("orders")}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${activeTab === "orders" ? "bg-blue-600" : "hover:bg-slate-700"}`}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
+                activeTab === "orders" ? "bg-blue-600" : "hover:bg-slate-700"
+              }`}
             >
-              Orders
+              📦 Orders
             </button>
             <button
               onClick={() => setActiveTab("email")}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${activeTab === "email" ? "bg-blue-600" : "hover:bg-slate-700"}`}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${
+                activeTab === "email" ? "bg-blue-600" : "hover:bg-slate-700"
+              }`}
             >
               ✉️ Email
               {!emailConfigured && (
-                <span className="ml-1.5 w-2 h-2 bg-yellow-400 rounded-full inline-block" />
+                <span className="ml-0.5 w-2 h-2 bg-yellow-400 rounded-full inline-block" />
               )}
             </button>
             <button
@@ -542,7 +551,7 @@ export default function AdminDashboard() {
                 setAuthenticated(false);
                 adminKeyRef.current = "";
               }}
-              className="text-sm text-red-400 hover:text-red-300 transition"
+              className="text-sm text-red-400 hover:text-red-300 transition px-2"
             >
               Logout
             </button>
@@ -757,8 +766,28 @@ export default function AdminDashboard() {
                             {order.paymentStatus.toUpperCase()}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-500">
-                          👤 {order.customerName} · 📧 {order.customerEmail}
+                        <p className="text-sm text-gray-500 flex flex-wrap items-center gap-x-2 gap-y-1">
+                          <span className="flex items-center gap-1">
+                            👤 {order.customerName}
+                          </span>
+                          <span className="text-gray-300">·</span>
+                          <a
+                            href={`mailto:${order.customerEmail}`}
+                            className="text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            📧 {order.customerEmail}
+                          </a>
+                          {order.customerPhone && (
+                            <>
+                              <span className="text-gray-300">·</span>
+                              <a
+                                href={`tel:${order.customerPhone.replace(/\s+/g, "")}`}
+                                className="text-green-700 hover:underline flex items-center gap-1 font-medium"
+                              >
+                                📞 {order.customerPhone}
+                              </a>
+                            </>
+                          )}
                         </p>
                         <p className="text-xs text-gray-400 mt-0.5">
                           {formatDate(order.createdAt)} ·{" "}
@@ -835,22 +864,65 @@ export default function AdminDashboard() {
                             <h4 className="font-semibold text-gray-900 text-sm mb-3">
                               📍 Shipping
                             </h4>
-                            <div className="bg-white p-3 rounded-lg text-sm text-gray-700">
+                            <div className="bg-white p-3 rounded-lg text-sm text-gray-700 space-y-1.5">
                               <p>{order.shippingAddress}</p>
                               <p>
                                 {order.shippingCity}, {order.shippingState}{" "}
                                 {order.shippingZip}
                               </p>
                               {order.trackingNumber && (
-                                <p className="mt-2 text-blue-700 font-medium">
+                                <p className="text-blue-700 font-medium">
                                   Tracking #: {order.trackingNumber}
                                 </p>
                               )}
                               {order.notes && (
-                                <p className="mt-2 text-gray-500 italic text-xs">
+                                <p className="text-gray-500 italic text-xs">
                                   Note: {order.notes}
                                 </p>
                               )}
+                            </div>
+                          </div>
+
+                          {/* Contact */}
+                          <div>
+                            <h4 className="font-semibold text-gray-900 text-sm mb-3">
+                              📞 Customer Contact
+                            </h4>
+                            <div className="bg-white p-3 rounded-lg text-sm space-y-2">
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-xs">Name</span>
+                                <span className="font-semibold text-gray-900">
+                                  {order.customerName}
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-xs">Email</span>
+                                <a
+                                  href={`mailto:${order.customerEmail}`}
+                                  className="font-medium text-blue-600 hover:underline"
+                                >
+                                  {order.customerEmail}
+                                </a>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-xs">Phone</span>
+                                {order.customerPhone ? (
+                                  <a
+                                    href={`tel:${order.customerPhone.replace(/\s+/g, "")}`}
+                                    className="font-semibold text-green-700 hover:underline"
+                                  >
+                                    {order.customerPhone}
+                                  </a>
+                                ) : (
+                                  <span className="text-gray-400 italic">—</span>
+                                )}
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-xs">Customer ID</span>
+                                <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded">
+                                  #{order.customerId}
+                                </span>
+                              </div>
                             </div>
                           </div>
 
@@ -1286,6 +1358,7 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+
       </div>
 
       {/* ─── UPDATE STATUS MODAL ──────────────────────── */}
@@ -1300,6 +1373,14 @@ export default function AdminDashboard() {
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
                     {selectedOrder.orderNumber} · {selectedOrder.customerName}
+                    {selectedOrder.customerPhone && (
+                      <a
+                        href={`tel:${selectedOrder.customerPhone.replace(/\s+/g, "")}`}
+                        className="ml-2 text-green-700 hover:underline font-medium"
+                      >
+                        📞 {selectedOrder.customerPhone}
+                      </a>
+                    )}
                   </p>
                 </div>
                 <button
